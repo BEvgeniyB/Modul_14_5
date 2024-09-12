@@ -5,8 +5,7 @@ from itertools import product
 
 connection = sqlite3.connect("database_14_5.db")
 cursor = connection.cursor()
-connection_User = sqlite3.connect("user_14_5.db")
-cursor_User = connection_User.cursor()
+
 
 def initiate_db():
     cursor.execute('''
@@ -18,7 +17,7 @@ def initiate_db():
     price INTEGER NOT NULL
     )
     ''')
-    cursor_User.execute('''
+    cursor.execute('''
     CREATE TABLE IF NOT EXISTS Users(
     id INTEGER PRIMARY KEY,
     username TEXT NOT NULL,
@@ -28,7 +27,6 @@ def initiate_db():
     )
     ''')
     connection.commit()
-    connection_User.commit()
 
 def add_products(title, price, description='', photo_path=''):
     if len(title) > 0 and isinstance(price, int):
@@ -41,13 +39,13 @@ def add_products(title, price, description='', photo_path=''):
 
 def add_user(data):
     f= data['username']
-    cursor_User.execute("INSERT INTO Users (username,email,age,balance) VALUES (?,?,?,?)",
+    cursor.execute("INSERT INTO Users (username,email,age,balance) VALUES (?,?,?,?)",
                    (data['username'], data['email'], data['age'], "1000"))
-    connection_User.commit()
+    connection.commit()
 
 def is_included(username):
-    cursor_User.execute('SELECT username FROM Users WHERE username=?', (username,))
-    if cursor_User.fetchone() is None:
+    cursor.execute('SELECT username FROM Users WHERE username=?', (username,))
+    if cursor.fetchone() is None:
         return False
     else:
         return True
@@ -67,3 +65,5 @@ if cursor.fetchone() is None:
     add_products("Zinc citrate", 400, 'описание 4', 'files/4.jpg')
     add_products("Omega 3 + Vitamin C", 280, 'комплект 4', 'files/11.jpg')
     connection.commit()
+
+connection.commit()
